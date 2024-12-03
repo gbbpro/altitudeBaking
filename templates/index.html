@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>High-Altitude Baking Adjustments</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-width: 900px;
+        text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      h1 {
+        color: #333;
+        margin-bottom: 20px;
+        flex-basis: 100%;
+      }
+
+      form {
+        flex: 1 1 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      label {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 5px;
+        display: block;
+      }
+
+      textarea,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      .output {
+        flex: 1 1 45%;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #333;
+        word-wrap: break-word;
+        margin-top: 20px;
+        text-align: left;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .output ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .output li {
+        margin-bottom: 10px;
+      }
+
+      .output li span {
+        font-weight: bold;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>High-Altitude Baking Adjustments</h1>
+      <form method="POST" id="recipe-form">
+        <div id="recipe-input-section">
+          <label for="user_recipe">Enter Your Recipe:</label>
+          <textarea
+            name="user_recipe"
+            id="user_recipe"
+            rows="6"
+            placeholder="Paste your recipe here..."
+            required
+          >
+{{ user_recipe }}</textarea
+          >
+          <button type="submit">Get High-Altitude Adjustments</button>
+        </div>
+      </form>
+
+      {% if altitudeAdjustment %}
+      <div class="output" id="original-recipe-section">
+        <h2>Original Recipe:</h2>
+        <ul>
+          {% for line in user_recipe.split('\n') if user_recipe %}
+          <li>{{ line }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="output">
+        <h2>Adjusted Recipe:</h2>
+        <ul>
+          {% for line in altitudeAdjustment.split('\n') if altitudeAdjustment %}
+          <li>{{ line }}</li>
+          {% endfor %}
+        </ul>
+        <div class="buttons">
+          <button id="download-button">Download Adjusted Recipe</button>
+          <button type="button" id="reset-button">Reset</button>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Pass Python Variables to JavaScript -->
+    <script>
+      const resetButton = document.getElementById("reset-button");
+      const downloadButton = document.getElementById("download-button");
+
+      // Reset functionality
+      resetButton?.addEventListener("click", () => {
+        window.location.href = '/';
+      });
+
+      // Download functionality
+      if (downloadButton) {
+        downloadButton.addEventListener("click", () => {
+          const altitudeAdjustment = {{ altitudeAdjustment|tojson|safe }};
+          if (altitudeAdjustment) {
+            const blob = new Blob([altitudeAdjustment], { type: "text/plain" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "adjusted_recipe.txt";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
