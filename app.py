@@ -28,7 +28,10 @@ def main():
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": system_prompt},  # Use the global system_prompt
+                    {
+                        "role": "system",
+                        "content": system_prompt,
+                    },  # Use the global system_prompt
                     {"role": "user", "content": user_recipe},
                 ],
             )
@@ -44,4 +47,4 @@ def main():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5555, debug=True)
+    app.run()
